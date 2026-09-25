@@ -38,6 +38,25 @@
   .live{color:#16a34a}
   #status{margin-bottom:6px}
   .yellow{height:4px;background:var(--brand2);border-radius:4px;width:60px;margin:10px auto 0}
+  .gcash-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;font-size:1.1rem;padding:15px;border-radius:14px;background:#007DFE;color:#fff;box-shadow:0 6px 16px rgba(0,125,254,.30);margin-bottom:14px}
+  .gcash-btn:active{transform:scale(.98)}
+  .gcash-btn .g{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#fff;color:#007DFE;font-weight:800}
+  .modal{position:fixed;inset:0;z-index:50;background:rgba(15,23,42,.55);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:16px 12px;-webkit-overflow-scrolling:touch}
+  .modal[hidden]{display:none}
+  .sheet{position:relative;background:#fff;border-radius:18px;max-width:440px;width:100%;padding:18px 18px 20px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+  .sheet h2{margin:0 36px 4px 0;font-size:1.2rem;color:#007DFE}
+  .sheet .x{position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;padding:0;background:#eef4ff;color:#1f2937;font-size:1.3rem;line-height:1}
+  .qrwrap{background:#0060e8;border-radius:14px;padding:10px;text-align:center;margin:10px 0}
+  .qrcrop{max-width:340px;margin:0 auto;aspect-ratio:907/1311;overflow:hidden;border-radius:10px}
+  .qrcrop img{display:block;width:119.05%;max-width:none;height:auto;margin:-41.29% 0 0 -9.52%}
+  .payinfo{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.95rem;margin:8px 0 12px}
+  .payinfo dt{color:var(--muted)}
+  .payinfo dd{margin:0;font-weight:700}
+  .dl{display:block;text-align:center;text-decoration:none;font-weight:700;background:#007DFE;color:#fff;border-radius:12px;padding:12px;margin-bottom:12px}
+  .steps{margin:0 0 10px;padding-left:22px;font-size:.92rem}
+  .steps li{margin-bottom:6px}
+  .paynote{background:#eef6ff;color:#0b4fa8;border-radius:10px;padding:10px 12px;font-size:.88rem}
+  .close2{width:100%;margin-top:12px}
 </style>
 </head>
 <body>
@@ -54,6 +73,7 @@
     <div class="hint">Search by first name or surname.</div>
     <div id="results"></div>
   </div>
+  <button id="payBtn" class="gcash-btn" type="button" aria-haspopup="dialog"><span class="g">G</span> Pay via GCash (₱500)</button>
   <div class="card">
     <div class="summary">
       <div class="stat"><b id="sCount">0</b><span>Teachers recorded as paid</span></div>
@@ -65,6 +85,26 @@
     <div id="all" hidden></div>
   </div>
 </main>
+<div id="payModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="payTitle">
+  <div class="sheet">
+    <button class="x" id="payX" type="button" aria-label="Close">×</button>
+    <h2 id="payTitle">Pay via GCash</h2>
+    <div class="qrwrap"><div class="qrcrop"><img src="gcash-qr.png" alt="GCash InstaPay QR code for RA****T V., ₱500.00" width="1080" height="2081" loading="lazy"></div></div>
+    <dl class="payinfo">
+      <dt>Amount</dt><dd>₱500.00 per shirt</dd>
+      <dt>Recipient</dt><dd>RA****T V.</dd>
+    </dl>
+    <a class="dl" href="gcash-qr.png" download="GCash-QR-Teachers-Day-Sublimation.png">⬇ Save QR image</a>
+    <ol class="steps">
+      <li>Save the QR (or screenshot it).</li>
+      <li>Open GCash, tap <b>“Pay QR”</b> / QR, then upload the image from your gallery (or scan it from another phone).</li>
+      <li>Pay <b>₱500</b> and screenshot your receipt.</li>
+      <li>Send the receipt to Raymart so your name can be added to the list.</li>
+    </ol>
+    <div class="paynote">Your name will appear on this page once your payment is recorded.</div>
+    <button class="secondary close2" id="payClose" type="button">Close</button>
+  </div>
+</div>
 <footer><div id="status">Last updated: <b>Sep 25, 2026</b></div>Not on the list but already paid? Please message the organizer so the record can be updated.</footer>
 <script>
 /* ===== CONFIG: paste the Google Sheets "Publish to web" CSV link here ===== */
@@ -148,6 +188,15 @@ function render(){
 q.addEventListener("input", search);
 tog.addEventListener("click", () => { all.hidden = !all.hidden; tog.textContent = all.hidden ? "Show all" : "Hide list"; });
 const P = new URLSearchParams(location.search);
+const payModal = document.getElementById("payModal"), payBtn = document.getElementById("payBtn");
+function openPay(){ payModal.hidden = false; document.body.style.overflow = "hidden"; document.getElementById("payX").focus(); }
+function closePay(){ payModal.hidden = true; document.body.style.overflow = ""; payBtn.focus(); }
+payBtn.addEventListener("click", openPay);
+document.getElementById("payX").addEventListener("click", closePay);
+document.getElementById("payClose").addEventListener("click", closePay);
+payModal.addEventListener("click", e => { if (e.target === payModal) closePay(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !payModal.hidden) closePay(); });
+if (P.get("pay") === "1") openPay();
 if (P.get("q")) q.value = P.get("q");
 if (P.get("all") === "1") tog.click();
 const fallbackNote = why => { status.innerHTML = `Last updated: <b>${esc(DATA.updated)}</b>` + (why ? `<br><span class="note">${esc(why)}</span>` : ""); };
