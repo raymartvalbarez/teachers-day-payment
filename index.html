@@ -68,7 +68,7 @@
 <footer><div id="status">Last updated: <b>Sep 25, 2026</b></div>Not on the list but already paid? Please message the organizer so the record can be updated.</footer>
 <script>
 /* ===== CONFIG: paste the Google Sheets "Publish to web" CSV link here ===== */
-const SHEET_CSV_URL = "";
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS8V5hv0DgO3QMuO68z-MXVciTWZ_BfCHVh7xZMyPA25mpiGj7vPLtzq_XB3D1IMen5m1VxUH9I5QIr/pub?gid=1921686250&single=true&output=csv";
 /* ======================================================================== */
 const DATA = {"sheet": "Sublimation Payment for Teacher", "amountLabel": "Amount Paid", "updated": "Sep 25, 2026", "rows": [{"name": "Rosela Caldeo", "amount": 500, "extra": {}}, {"name": "Rocelyn Doronio", "amount": 500, "extra": {}}, {"name": "Angely Daliva", "amount": 500, "extra": {}}, {"name": "Donna B.amarillo", "amount": 500, "extra": {}}, {"name": "Rosame Danos", "amount": 500, "extra": {}}, {"name": "Cristine Alovera", "amount": 500, "extra": {}}]};   // fallback snapshot embedded at build time
 const peso = v => (typeof v === "number") ? "₱" + v.toLocaleString("en-PH", {minimumFractionDigits: v % 1 ? 2 : 0, maximumFractionDigits: 2}) : (v === null || v === undefined || v === "" ? "—" : String(v));
